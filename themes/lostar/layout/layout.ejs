@@ -1,0 +1,109 @@
+<%
+    let type = "post";
+    if (is_home()) type = "index";
+    if (is_post() || is_page()) type = "post";
+    if (is_category() || page.type === "categories") type = "categories";
+    if (is_tag() || page.type === "tags") type = "tags";
+    if (is_archive()) type = "archives";
+    let title = page.title + " | " + config.title;
+    if (is_home()) title = config.title;
+    if (is_post() || is_page()) {
+        let displayTitle = page.title;
+        const pageCatName = page.categories && page.categories.data && page.categories.data.length > 0 ? page.categories.data[0].name : null;
+        if (is_post() && pageCatName === 'Diary') displayTitle = date(page.date, 'DD/MM/YYYY');
+        title = displayTitle + " | " + config.title;
+    }
+    if (is_category()) title = "Categories: " + page.category + " | " + config.title;
+    if (is_tag()) title = "Tags: " + page.tag + " | " + config.title;
+    if (is_archive()) title = "Archives | " + config.title;
+
+    /* ====== SEO: Dynamic description ====== */
+    let seoDescription = config.description || '';
+    if (page.description) {
+        seoDescription = page.description;
+    } else if (page.excerpt) {
+        seoDescription = strip_html(page.excerpt).replace(/\n/g, ' ').substring(0, 200).trim();
+    } else if (is_post() && page.content) {
+        seoDescription = strip_html(page.content).replace(/\n/g, ' ').substring(0, 200).trim();
+    }
+
+    /* ====== SEO: Dynamic keywords ====== */
+    let seoKeywords = config.keywords || '';
+    if (page.keywords) {
+        seoKeywords = page.keywords;
+    } else if (page.tags && page.tags.length) {
+        seoKeywords = page.tags.map(function(tag) { return tag.name; }).join(',');
+    }
+
+    /* ====== SEO: Dynamic image ====== */
+    let seoDefaultImage = (theme.seo && theme.seo.default_image) || theme.avatar;
+    let seoImage = '';
+    if (page.og_image) {
+        seoImage = page.og_image;
+    } else if (page.photos && page.photos.length) {
+        seoImage = page.photos[0];
+    } else if (page.cover) {
+        seoImage = page.cover;
+    } else {
+        seoImage = seoDefaultImage;
+    }
+    if (seoImage && !seoImage.startsWith('http')) {
+        seoImage = config.url + url_for(seoImage);
+    }
+%>
+<!DOCTYPE html>
+<html lang="<%- config.language %>">
+<head>
+    <meta charset="utf-8" />
+    <title><%= title %></title>
+    <meta name="author" content="<%- config.author %>" />
+
+    <meta name="keywords" content="<%- seoKeywords %>" />
+    <link rel="canonical" href="<%- full_url_for(page.path || path) %>" />
+    <%- open_graph({
+        description: seoDescription,
+        keywords: seoKeywords,
+        image: seoImage,
+        twitter_card: 'summary_large_image',
+        twitter_site: (theme.seo && theme.seo.twitter_site) || '',
+        twitter_image: seoImage,
+        fb_admins: (theme.seo && theme.seo.fb_admins) || '',
+        fb_app_id: (theme.seo && theme.seo.fb_app_id) || ''
+    }) %>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    />
+    <link rel="icon" href="<%- url_for(theme.avatar) %>" />
+    <%- partial("import", { type }) %>
+</head>
+<body>
+    <div id="layout">
+        <transition name="fade">
+            <div id="loading" v-show="loading">
+                <div id="loading-circle">
+                    <h2><%- (theme.i18n && theme.i18n.loading_title) || 'LOADING' %></h2>
+                    <p><%- (theme.i18n && theme.i18n.loading_message) || 'Please wait a moment...' %></p>
+                    <img src="<%- url_for(theme.loading) %>" />
+                </div>
+            </div>
+        </transition>
+        <%- partial("menu") %>
+        <div id="main" :class="loading ? 'into-enter-from': 'into-enter-active'">
+            <%- partial(type) %>
+            <%- partial("footer") %>
+        </div>
+        <% if (theme.preview.enable) { %>
+        <transition name="fade">
+            <div id="preview" ref="preview" v-show="previewShow">
+                <img id="preview-content" ref="previewContent" />
+            </div>
+        </transition>
+        <% } %>
+    </div>
+    <script src="<%- url_for("/js/main.js") %>"></script>
+    <% if (type === "post" && page.comments) { %>
+    <%- partial("comment") %>
+    <% } %>
+</body>
+</html>
