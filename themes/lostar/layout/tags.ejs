@@ -1,0 +1,81 @@
+<div id="archives">
+    <% let posts = []; %>
+    <%
+        const getDisplayTitle = (post) => {
+            const catName = post.categories && post.categories.data.length > 0 ? post.categories.data[0].name : null;
+            return catName === 'Diary' ? date(post.date, 'DD/MM/YYYY') : post.title;
+        };
+    %>
+    <div class="categories-tags">
+        <% site.tags.forEach((tag) => { %>
+        <%
+            const tagStyle = getTxTagStyle(tag.name);
+            const isActive = is_tag(tag.name);
+            const chipBg = isActive
+                ? `linear-gradient(120deg, ${tagStyle ? tagStyle.bg : '#9abbf7'} 0%, ${tagStyle ? tagStyle.bg : '#ffbbf4'} 60%)`
+                : (tagStyle ? tagStyle.bg : '#eef2f7');
+            const chipText = tagStyle ? tagStyle.text : '#4f6370';
+        %>
+        <span>
+            <a href="<%- url_for(tag.path) %>" style="background: <%- chipBg %>; color: <%- chipText %>"<% if (isActive) { %> class="active-chip"<% } %>>
+                <span class="icon">
+                    <i class="fa-solid fa-tags fa-fw"></i>
+                </span>
+                <%= tag.name %>
+            </a>
+        </span>
+        <% if (isActive) { %>
+        <%
+            posts = tag.posts;
+            posts.data.sort((a, b) => b.date - a.date);
+        %>
+        <% } %>
+        <% }); %>
+    </div>
+    <% posts.forEach((post) => { %>
+    <%
+        const postCatName = post.categories && post.categories.data.length > 0 ? post.categories.data[0].name : null;
+    %>
+    <div class="timeline">
+        <div class="timeline-tail"></div>
+        <div class="timeline-content">
+            <div class="item-time"><%= date(post.date, "YYYY/M/D") %></div>
+            <a href="<%- url_for(post.path) %>">
+                <h3><%= getDisplayTitle(post) %></h3>
+            </a>
+            <div class="info">
+                <% if (post.categories && post.categories.data.length !== 0) { %>
+                <%
+                    const catStyle = getTxCategoryStyle(post.categories.data[0].name);
+                %>
+                <span class="category">
+                    <a href="<%- url_for(post.categories.data[0].path) %>"<% if (catStyle) { %> style="color:<%- catStyle.text %>"<% } %>>
+                        <span class="icon">
+                            <i class="fa-solid fa-bookmark fa-fw"></i>
+                        </span>
+                        <%= post.categories.data[0].name %>
+                    </a>
+                </span>
+                <% } %>
+                <% if (post.tags && post.tags.data.length !== 0) { %>
+                <span class="tags">
+                    <span class="icon">
+                        <i class="fa-solid fa-tags fa-fw"></i>
+                    </span>
+                    <% post.tags.data.forEach((tag) => { %>
+                    <%
+                        const tStyle = getTxTagStyle(tag.name, postCatName);
+                    %>
+                    <span class="tag">
+                        <a href="<%- url_for(tag.path) %>"<% if (tStyle) { %> style="color:<%- tStyle.text %>"<% } %>>
+                            <%= tag.name %>
+                        </a>
+                    </span>
+                    <% }); %>
+                </span>
+                <% } %>
+            </div>
+        </div>
+    </div>
+    <% }); %>
+</div>
