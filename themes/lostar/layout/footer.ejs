@@ -1,0 +1,25 @@
+<footer id="footer">
+    <div id="footer-wrap">
+        <div>
+            &copy; <%= date(Date.now(), "YYYY") %> 作者
+            <a href="https://github.com/<%- theme.footer.copyright.handle %>"><%= theme.footer.copyright.name %></a>
+        </div>
+        <div>
+            QQ邮箱：
+            <a href="mailto:2686603420@qq.com">2686603420@qq.com</a>
+        </div>
+        <div>
+            基于 <a href="https://hexo.io">Hexo</a> |
+            <a href="https://github.com/thatnghiep-dev/hexo-theme-loststar">Lostar 主题</a>
+        </div>
+        <% if (theme.footer.ICP.enable) { %>
+        <div>
+            <% if (theme.footer.ICP.link) { %>
+            <a href="<%- url_for(theme.footer.ICP.link) %>"><%= theme.footer.ICP.code %></a>
+            <% } else { %>
+            <%= theme.footer.ICP.code %>
+            <% } %>
+        </div>
+        <% } %>
+    </div>
+</footer>

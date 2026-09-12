@@ -1,0 +1,117 @@
+<%
+    const txStyle = getTxStyle(page);
+    const txVarParts = [];
+    if (txStyle) {
+        txVarParts.push(`--tx-post-bg:${txStyle.post.bg}`);
+        txVarParts.push(`--tx-post-text:${txStyle.post.text}`);
+        txVarParts.push(`--tx-cat-bg:${txStyle.categoryChip.bg}`);
+        txVarParts.push(`--tx-cat-text:${txStyle.categoryChip.text}`);
+        if (txStyle.titleColor) txVarParts.push(`--tx-title-color:${txStyle.titleColor}`);
+        if (txStyle.headingColor) txVarParts.push(`--tx-heading-color:${txStyle.headingColor}`);
+        if (txStyle.titleGlow) txVarParts.push(`--tx-title-glow:${txStyle.titleGlow}`);
+    }
+    const txVars = txVarParts.join(';');
+    const fxClasses = [];
+    if (txStyle && txStyle.effects.outline.enable) fxClasses.push('fx-outline');
+    if (txStyle && txStyle.effects.spark.enable) fxClasses.push('fx-spark');
+    const fxVars = [];
+    if (txStyle && txStyle.effects.outline.enable) {
+        fxVars.push(`--fx-outline-color:${txStyle.effects.outline.color}`);
+        fxVars.push(`--fx-outline-width:${txStyle.effects.outline.width}`);
+    }
+    if (txStyle && txStyle.effects.spark.enable) {
+        fxVars.push(`--fx-spark-color:${txStyle.effects.spark.color}`);
+        fxVars.push(`--fx-spark-blur:${txStyle.effects.spark.blur}`);
+        fxVars.push(`--fx-spark-opacity:${txStyle.effects.spark.opacity}`);
+        fxVars.push(`--fx-spark-duration:${txStyle.effects.spark.duration}`);
+    }
+    const allVars = [txVars, ...fxVars].filter(Boolean).join(';');
+    const catName = txStyle ? txStyle.category : null;
+    const isDiaryPage = catName === 'Diary';
+    const displayTitle = isDiaryPage ? date(page.date, "DD/MM/YYYY") : page.title;
+%>
+<div class="article<%= fxClasses.length ? ' ' + fxClasses.join(' ') : '' %>" <% if (txStyle) { %>data-category="<%- catName %>" style="<%- allVars %>"<% } %>>
+    <div>
+        <h1><%= displayTitle %></h1>
+    </div>
+    <div class="info">
+        <span class="date">
+            <span class="icon">
+                <i class="fa-solid fa-calendar fa-fw"></i>
+            </span>
+            <%= date(page.date, "YYYY/M/D") %>
+        </span>
+        <% if (page.categories && page.categories.data.length !== 0) { %>
+        <%
+            const catStyle = getTxCategoryStyle(page.categories.data[0].name);
+        %>
+        <span class="category">
+            <a href="<%- url_for(page.categories.data[0].path) %>"<% if (catStyle) { %> style="color:<%- catStyle.text %>"<% } %>>
+                <span class="icon">
+                    <i class="fa-solid fa-bookmark fa-fw"></i>
+                </span>
+                <%= page.categories.data[0].name %>
+            </a>
+        </span>
+        <% } %>
+        <% if (page.tags && page.tags.data.length !== 0) { %>
+        <span class="tags">
+            <span class="icon">
+                <i class="fa-solid fa-tags fa-fw"></i>
+            </span>
+            <% page.tags.data.forEach((tag) => { %>
+            <%
+                const tagStyle = getTxTagStyle(tag.name, catName);
+            %>
+            <span class="tag">
+                <a href="<%- url_for(tag.path) %>"<% if (tagStyle) { %> style="color:<%- tagStyle.text %>"<% } %>>
+                    <%= tag.name %>
+                </a>
+            </span>
+            <% }); %>
+        </span>
+        <% } %>
+    </div>
+    <% if (theme.crypto.enable && typeof page.secret !== "undefined") { %>
+    <% const CryptoJS = getCryptoJS(); %>
+    <input
+        id="crypto"
+        :class="['input', cryptoStatus]"
+        :disabled="cryptoStatus === 'success'"
+        ref="crypto"
+        placeholder="<%- (theme.i18n && theme.i18n.crypto_placeholder) || 'This post is encrypted. Enter password.' %>"
+        data-encrypted="<%- CryptoJS.AES.encrypt(page.content, page.secret).toString() %>"
+        data-shasum="<%- CryptoJS.SHA256(page.content).toString() %>"
+        v-model="crypto"
+    />
+    <transition name="fade">
+        <div class="content" ref="content" v-show="cryptoStatus === 'success'"></div>
+    </transition>
+    <% } else { %>
+    <div class="content" v-pre>
+        <%- page.content %>
+    </div>
+    <% } %>
+    <% if (page.comments) { %>
+    <% if (theme.gitalk.enable) { %>
+    <div id="comment">
+        <div id="gitalk-container"></div>
+    </div>
+    <% } %>
+    <% if (theme.giscus.enable) { %>
+    <div id="comment">
+        <div id="giscus-container" class="giscus"></div>
+    </div>
+    <% } %>
+    <% if (theme.waline.enable) { %>
+    <div id="comment">
+        <div id="waline-container"></div>
+    </div>
+    <% } %>
+    <% if (theme.twikoo.enable) { %>
+    <div id="comment">
+        <div id="twikoo-container"></div>
+    </div>
+    <% } %>
+    <% } %>
+</div>

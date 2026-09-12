@@ -1,0 +1,31 @@
+{
+	"name": "hexo-theme-loststar",
+	"version": "1.0.0",
+	"description": "A concise Hexo theme, inherited from ParticleX and Particle.",
+	"keywords": [
+		"giscus",
+		"gitalk",
+		"hexo",
+		"hexo-theme",
+		"loststar",
+		"twikoo",
+		"waline"
+	],
+	"homepage": "https://github.com/thatnghiep-dev/hexo-theme-loststar#readme",
+	"bugs": {
+		"url": "https://github.com/thatnghiep-dev/hexo-theme-loststar/issues"
+	},
+	"license": "MIT",
+	"author": "thatnghiep-dev",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/thatnghiep-dev/hexo-theme-loststar.git"
+	},
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"dependencies": {
+		"hexo-helper-crypto": "^1.2.1",
+		"hexo-renderer-ejs": "^2.0.0"
+	}
+}
