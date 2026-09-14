@@ -102,6 +102,10 @@ menu:
     name: box-archive
     theme: solid
     link: /archives
+  友情链接:
+    name: link
+    theme: solid
+    link: /links
   分类:
     name: bookmark
     theme: solid
@@ -114,10 +118,7 @@ menu:
 # Side info card
 card:
   enable: true
-  description: |
-    欢迎来到 xyzs0734 的博客
   iconLinks:
-  friendLinks:
 
 # Footer info
 footer:

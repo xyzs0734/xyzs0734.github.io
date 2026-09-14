@@ -35,12 +35,14 @@
         <h1><%= displayTitle %></h1>
     </div>
     <div class="info">
+        <% if (!page.hide_date) { %>
         <span class="date">
             <span class="icon">
                 <i class="fa-solid fa-calendar fa-fw"></i>
             </span>
             <%= date(page.date, "YYYY/M/D") %>
         </span>
+        <% } %>
         <% if (page.categories && page.categories.data.length !== 0) { %>
         <%
             const catStyle = getTxCategoryStyle(page.categories.data[0].name);

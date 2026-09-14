@@ -135,6 +135,14 @@
   margin: 20px auto;
   width: 85%;
 }
+#home-card #card-div .email {
+  margin: 14px auto 0;
+  width: 85%;
+}
+#home-card #card-div .email a {
+  color: #66afef;
+  overflow-wrap: anywhere;
+}
 #home-card #card-div .friend-links .friend-link {
   margin-bottom: 5px;
 }
@@ -1107,6 +1115,94 @@ ol li {
 }
 .discord-emoji-animated {
   image-rendering: auto;
+}
+
+/* Friend links page */
+.friend-links-page {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0 auto;
+  max-width: 900px;
+}
+.friend-link-card {
+  align-items: center;
+  background: #fff;
+  border: 1px solid #d7e0ea;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px #d9d9d966;
+  color: #1e3e3f;
+  display: flex;
+  min-height: 84px;
+  overflow: hidden;
+  padding: 0 18px 0 0;
+  text-decoration: none !important;
+  transition:
+    border-color 0.25s,
+    box-shadow 0.25s,
+    transform 0.25s;
+}
+.friend-link-card:hover {
+  border-color: #66afef;
+  box-shadow: 0 12px 28px #9abbf74d;
+  color: #1e3e3f;
+  transform: translateY(-2px);
+}
+.friend-link-avatar {
+  border-radius: 15px 0 0 15px !important;
+  flex: 0 0 84px;
+  height: 84px !important;
+  margin: 0 16px 0 0 !important;
+  max-width: none !important;
+  object-fit: cover;
+  width: 84px !important;
+}
+.friend-link-copy {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+.friend-link-name {
+  color: #1e3e3f;
+  font-size: 17px;
+  line-height: 1.25;
+}
+.friend-link-description {
+  color: #5c6b72;
+  font-size: 13px;
+  line-height: 1.45;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.friend-link-arrow {
+  color: #8ba1b5;
+  flex: 0 0 auto;
+  margin-left: 14px;
+  transition:
+    color 0.25s,
+    transform 0.25s;
+}
+.friend-link-card:hover .friend-link-arrow {
+  color: #66afef;
+  transform: translate(2px, -2px);
+}
+@media (max-width: 900px) {
+  .friend-links-page {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 500px) {
+  .friend-link-card {
+    min-height: 72px;
+  }
+  .friend-link-avatar {
+    flex-basis: 72px;
+    height: 72px !important;
+    width: 72px !important;
+  }
 }
 
 /* ====== Taxonomy Effects ====== */
