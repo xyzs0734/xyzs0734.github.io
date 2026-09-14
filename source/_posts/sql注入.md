@@ -12,7 +12,7 @@ tags:
 
 库(database)(table_schema) ——> 表(table_name) ——> 列(column_name) ——> 数据
 
-数据库 为层级结构：
+数据库 为层级结构：1
 
 ```
 +数据库 ( database )
