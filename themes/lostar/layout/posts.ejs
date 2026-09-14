@@ -1,6 +1,7 @@
 <%
     let posts = site.posts,
         current = (page.current - 1) * config.index_generator.per_page;
+    // Article order is based only on the immutable creation date, never mtime/updated.
     posts.data.sort((a, b) => {
         let x = a.pinned ?? 0,
             y = b.pinned ?? 0;

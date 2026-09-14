@@ -1,5 +1,6 @@
 ---
 title: sql注入
+date: 2026-09-12 16:16:57
 description: 整理 SQL 注入基础概念、常见注入语句和实用 payload。
 categories:
   - 笔记

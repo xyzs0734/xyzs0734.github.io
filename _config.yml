@@ -91,7 +91,8 @@ meta_generator: true
 date_format: YYYY-MM-DD
 time_format: HH:mm:ss
 ## updated_option supports 'mtime', 'date', 'empty'
-updated_option: 'mtime'
+# Keep the creation date stable when an article's content is edited.
+updated_option: 'date'
 
 # Pagination
 ## Set per_page to 0 to disable pagination

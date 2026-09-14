@@ -1,5 +1,6 @@
 ---
 title: hello，world
+date: 2026-09-12 14:22:25
 description: 第一篇博客
 categories:
   - 生活

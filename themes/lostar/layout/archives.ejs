@@ -11,7 +11,7 @@
     <input id="search-bar" class="input" placeholder="Search" v-model="rawSearch" />
     <% } %>
     <div id="timeline-wrap" ref="timeline">
-        <% posts.reverse().forEach((post, id) => { %>
+        <% posts.forEach((post, id) => { %>
         <div class="timeline" data-title="<%- getDisplayTitle(post).toLowerCase().replace(/\s+/g, "") %>">
             <div class="timeline-tail"></div>
             <div class="timeline-content">
