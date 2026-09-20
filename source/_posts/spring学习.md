@@ -217,7 +217,60 @@ Accept-Encoding: gzip, deflate
 ```
 
 ## 其他
-以下知识是我还没有花过多的时间去了解，放在其他这一栏不代表它不重要，在以后的学习我会慢慢的补全这些笔记
+
+### Spring Security是什么？
+
+它默认会给 Actuator 端点加上**除了 health/info 之外都要登录**的规则。核心功能包括**认证**和**授权**，减少了为系统安全而编写大量重复代码的工作。
+说白了就是：**Spring Security用于在Spring框架中提供安全认证功能。**
+
+认证：即系统**判断用户的身份是否合法**，合法可继续访问，不合法则拒绝访问。常见的用户身份认证方式有：用户名密码登录、二维码登录、手机短信登录等方式。主要是为了保护系统的隐私数据与资源，用户的身份合法才能访问该系统的资源。
+
+授权：即认证通过后，**根据用户的权限来控制用户访问资源的过程**，拥有资源的访问权限则正常访问，没有权限则拒绝访问。 比如在视频网站中，普通用户登录后只有观看免费视频的权限，而VIP用户登录后，网站会给该用户提供观看VIP视频的权限。
+
+加了个 Spring Security 并不代表就一定安全了
+
+#### CVE-2022-22978
+
+受影响的版本
+
+- 5.5.x < 5.5.7
+- 5.6.x < 5.6.4
+- 及更早的不受支持版本
+
+正常的访问admin会直接拦截
+
+![image8](/images/spring学习/image8.jpg)
+
+![image9](/images/spring学习/image9.jpg)
+
+**漏洞成因**：
+
+Spring Security 的 RegexRequestMatcher 在处理 URL 路径匹配时，若正则表达式中包含 . 字符（例如 /admin/.*），默认情况下 . 不会匹配换行符（\n 或 \r）。攻击者可通过在 URL 中插入 URL 编码的换行符（%0a 或 %0d）绕过校验。
+
+漏洞版本的 `RegexRequestMatcher` 未启用 `Pattern.DOTALL` 标志，导致正则表达式未覆盖换行符等特殊字符，从而产生逻辑漏洞。
+
+**源码分析**(RegexRequestMatcher)
+
+```
+public final class RegexRequestMatcher implements RequestMatcher {
+
+    public RegexRequestMatcher(String pattern, boolean caseInsensitive) {
+        // 1 默认标志编译，没有 DOTALL
+        this.pattern = Pattern.compile(pattern,
+            caseInsensitive ? Pattern.CASE_INSENSITIVE : 0);
+    }
+
+    @Override
+    public boolean matches(HttpServletRequest request) {
+        // 2 直接取原始 servletPath，不做任何处理
+        String url = getRequestPath(request);   // 就是 request.getServletPath()
+        // 3 原样丢给正则做全串匹配
+        return this.pattern.matcher(url).matches();
+    }
+}
+```
+
+漏洞版本正则 `/admin/.*` 不会匹配 `%0a`（即 `\n`），导致路径 `/admin/111\n` 被误判为合法路径，绕过权限校验。
 
 ### Swagger UI 敏感接口泄露
 
@@ -229,17 +282,9 @@ Swagger 是一个**自动生成 API 接口文档**的工具。用于生成、描
 
 **风险点**：信息泄露。由于未正确配置访问控制或未实施安全措施，导致API接口被不授权的人员访问和利用，从而导致系统安全风险。
 
-### Spring Security是什么？
-
-它默认会给 Actuator 端点加上**除了 health/info 之外都要登录**的规则。核心功能包括**认证**和**授权**，减少了为系统安全而编写大量重复代码的工作。
-
-认证：即系统**判断用户的身份是否合法**，合法可继续访问，不合法则拒绝访问。常见的用户身份认证方式有：用户名密码登录、二维码登录、手机短信登录等方式。主要是为了保护系统的隐私数据与资源，用户的身份合法才能访问该系统的资源。
-
-授权：即认证通过后，**根据用户的权限来控制用户访问资源的过程**，拥有资源的访问权限则正常访问，没有权限则拒绝访问。 比如在视频网站中，普通用户登录后只有观看免费视频的权限，而VIP用户登录后，网站会给该用户提供观看VIP视频的权限。
-
 ### 架构模式对比
 
-![image8](/images/spring学习/image8.png)
+![image10](/images/spring学习/image10.png)
 
 ### 怎么判断传统web框架还是前后端分离框架？
 
